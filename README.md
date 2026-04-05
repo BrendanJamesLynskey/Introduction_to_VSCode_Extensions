@@ -4,6 +4,8 @@ An interactive Reveal.js presentation covering VSCode extensions — from archit
 
 ## ▶ [Open the Presentation](https://brendanjameslynskey.github.io/Introduction_to_VSCode_Extensions/)
 
+## 📄 [Markdown Version](presentation.md)
+
 ---
 
 ## Contents
