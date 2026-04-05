@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to VSCode Extensions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+<style>
+  :root {
+    --amber:  #f5a623;
+    --green:  #4ecb8d;
+    --purple: #a78bfa;
+    --blue:   #60a5fa;
+    --red:    #f87171;
+    --bg:     #0a0a0f;
+    --bg2:    #10101a;
+    --bg3:    #181824;
+    --border: #2a2a3a;
+    --text:   #e8e8f0;
+    --muted:  #8888a8;
+  }
+
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; font-weight: 700; }
+  .reveal h1 { font-size: 1.6em; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.1em; color: var(--amber); margin-bottom: .2em; }
+  .reveal h3 { font-size: .78em; color: var(--green); margin-bottom: .15em; }
+  .reveal p  { font-size: .56em; line-height: 1.45; color: var(--text); }
+  .reveal li { font-size: .54em; line-height: 1.45; margin-bottom: .1em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
+                 border-radius: 6px; padding: .3em .5em; margin: .25em 0; }
+  .reveal pre code { font-size: .52em; line-height: 1.35; background: transparent; color: #cdd6f4; }
+
+  /* ── slide chrome ── */
+  .slide-hdr {
+    display: flex; align-items: center; gap: .4em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .2em; margin-bottom: .3em;
+  }
+  .slide-hdr .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .42em; font-weight: 500;
+    color: var(--bg); background: var(--amber);
+    padding: .1em .4em; border-radius: 3px;
+    letter-spacing: .04em;
+  }
+  .slide-hdr h2 { margin: 0; font-size: .95em; }
+
+  /* ── two-column ── */
+  .cols   { display: grid; gap: .5em; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols-6040 { grid-template-columns: 6fr 4fr; }
+  .cols-4060 { grid-template-columns: 4fr 6fr; }
+
+  /* ── cards ── */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 6px; padding: .35em .6em;
+  }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.purple{ border-left: 3px solid var(--purple); }
+  .card.blue  { border-left: 3px solid var(--blue); }
+  .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: .64em; margin: 0 0 .12em; }
+  .card p  { font-size: .52em; margin: 0; color: #b8b8d0; }
+  .card ul { margin: 0; padding-left: 1em; }
+  .card li { font-size: .52em; color: #b8b8d0; margin-bottom: .02em; }
+
+  /* ── table ── */
+  .reveal table { width: 100%; border-collapse: collapse; font-size: .5em; }
+  .reveal table th { background: var(--bg3); color: var(--amber); font-weight: 600;
+                     padding: .2em .4em; border: 1px solid var(--border); text-align: left; }
+  .reveal table td { padding: .18em .4em; border: 1px solid var(--border); color: #ccc; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+
+  /* ── accent spans ── */
+  .a  { color: var(--amber); font-weight: 600; }
+  .g  { color: var(--green); font-weight: 600; }
+  .p  { color: var(--purple); font-weight: 600; }
+  .b  { color: var(--blue); font-weight: 600; }
+  .r  { color: var(--red); font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── SVG graph diagrams ── */
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+
+  /* ── pill badges ── */
+  .pill {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: .44em; padding: .08em .4em; border-radius: 99px;
+    border: 1px solid; margin: 0 .08em;
+  }
+  .pill.amber { color: var(--amber); border-color: var(--amber); }
+  .pill.green { color: var(--green); border-color: var(--green); }
+  .pill.purple{ color: var(--purple); border-color: var(--purple); }
+  .pill.blue  { color: var(--blue); border-color: var(--blue); }
+
+  /* ── footer — hidden ── */
+  .reveal .slide-footer { display: none; }
+  /* title slide special */
+  .title-slide h1 { font-size: 1.8em; }
+  .title-slide .subtitle {
+    font-size: .7em; color: var(--green); font-family: 'DM Sans', sans-serif;
+    font-weight: 300; letter-spacing: .04em; margin: .3em 0 .6em;
+  }
+  .title-slide .meta { font-size: .48em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* reduce default margins */
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+  .reveal .slides > section { display: flex !important; flex-direction: column !important; overflow-y: auto !important; align-items: stretch !important; justify-content: flex-start !important; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- ═══════════════════════════════ SLIDE 01 — TITLE ═══════════════════════════════ -->
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="text-align:left; max-width:820px; margin:0 auto; padding: 1em 0;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">
+      TECHNICAL PRESENTATION
+    </div>
+    <h1>Introduction to<br>VSCode Extensions</h1>
+    <div class="subtitle">Building, Publishing &amp; Mastering the Extension Ecosystem</div>
+    <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
+    <div class="meta">Extension API &middot; Language Server Protocol &middot; Webviews &middot; Marketplace &middot; Debugging</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 02 — AGENDA ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">02</span><h2>Agenda</h2></div>
+  <div class="cols cols-2">
+    <div class="card amber">
+      <h3>Foundations</h3>
+      <ul>
+        <li>Why VSCode won &amp; the extension model</li>
+        <li>Architecture: Electron, processes, isolation</li>
+        <li>Extension anatomy: manifest, activation, lifecycle</li>
+        <li>Your first extension in 5 minutes</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Core APIs</h3>
+      <ul>
+        <li>Commands, menus, &amp; keybindings</li>
+        <li>Language features &amp; Language Server Protocol</li>
+        <li>TreeViews, Webviews, &amp; custom editors</li>
+        <li>Workspace, file system, &amp; configuration</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Advanced Topics</h3>
+      <ul>
+        <li>Debugging extensions &amp; the Extension Host</li>
+        <li>Testing with @vscode/test-electron</li>
+        <li>Webview UI Toolkit &amp; message passing</li>
+        <li>Notebooks, terminal, &amp; source control APIs</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h3>Ship It</h3>
+      <ul>
+        <li>Packaging with vsce</li>
+        <li>Publishing to the Marketplace</li>
+        <li>CI/CD for extensions</li>
+        <li>Performance, security, &amp; maintenance</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 03 — WHY VSCODE ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">03</span><h2>Why VSCode Won</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <p>Visual Studio Code launched in 2015 and quickly became the <span class="a">most popular code editor</span> in the world. The Stack Overflow Developer Survey consistently shows 70%+ adoption. The secret is its <span class="g">extension model</span>.</p>
+      <p>Unlike monolithic IDEs, VSCode ships a <span class="p">lean core</span> and delegates language support, debugging, themes, and tooling to extensions. This means the community — not Microsoft — drives most of the editor's capability.</p>
+      <div class="card amber" style="margin-top:.3em;">
+        <h3>By the Numbers</h3>
+        <ul>
+          <li><span class="a">50,000+</span> extensions on the Marketplace</li>
+          <li><span class="g">Billions</span> of total installs across all extensions</li>
+          <li><span class="p">Monthly</span> release cadence with public roadmap</li>
+          <li><span class="b">MIT-licensed</span> core (Code - OSS), proprietary build (Visual Studio Code)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>The Extension Philosophy</h3>
+        <ul>
+          <li><span class="a">Contribution points</span> &mdash; declare what you add (commands, views, languages, themes)</li>
+          <li><span class="g">Activation events</span> &mdash; load only when needed</li>
+          <li><span class="p">Isolation</span> &mdash; extensions run in a separate process</li>
+          <li><span class="b">Common APIs</span> &mdash; one extension model for all features</li>
+        </ul>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>What Extensions Can Do</h3>
+        <ul>
+          <li>Add language support (syntax, IntelliSense, linting)</li>
+          <li>Provide debuggers for any runtime</li>
+          <li>Create custom UI panels, sidebars, and editors</li>
+          <li>Integrate with external tools and services</li>
+          <li>Add themes, icons, and keybinding schemes</li>
+          <li>Extend the terminal, SCM, and notebook experiences</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 04 — ARCHITECTURE ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">04</span><h2>VSCode Architecture</h2></div>
+  <p>VSCode is built on <span class="a">Electron</span> (Chromium + Node.js). Extensions run in a separate <span class="g">Extension Host</span> process so a misbehaving extension cannot freeze the editor UI.</p>
+  <svg class="diagram" viewBox="0 0 900 280" width="820">
+    <!-- Main process -->
+    <rect x="10" y="10" width="880" height="50" rx="6" fill="#1a1a2a" stroke="#f5a623" stroke-width="1.5"/>
+    <text x="450" y="42" text-anchor="middle" fill="#f5a623" font-family="Playfair Display,serif" font-size="17" font-weight="700">Main Process (Electron)</text>
+    <!-- Renderer -->
+    <rect x="10" y="75" width="430" height="70" rx="6" fill="#10101a" stroke="#4ecb8d" stroke-width="1.5"/>
+    <text x="225" y="105" text-anchor="middle" fill="#4ecb8d" font-family="Playfair Display,serif" font-size="16" font-weight="700">Renderer Process (UI)</text>
+    <text x="225" y="130" text-anchor="middle" fill="#8888a8" font-family="DM Sans,sans-serif" font-size="12">Editor, panels, sidebar, terminal &mdash; Chromium</text>
+    <!-- Extension Host -->
+    <rect x="460" y="75" width="430" height="70" rx="6" fill="#10101a" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="675" y="105" text-anchor="middle" fill="#a78bfa" font-family="Playfair Display,serif" font-size="16" font-weight="700">Extension Host Process</text>
+    <text x="675" y="130" text-anchor="middle" fill="#8888a8" font-family="DM Sans,sans-serif" font-size="12">Runs all extensions &mdash; separate Node.js process</text>
+    <!-- Language Server -->
+    <rect x="460" y="165" width="210" height="50" rx="6" fill="#10101a" stroke="#60a5fa" stroke-width="1.5"/>
+    <text x="565" y="195" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono,monospace" font-size="11">Language Server (LSP)</text>
+    <!-- Debug Adapter -->
+    <rect x="680" y="165" width="210" height="50" rx="6" fill="#10101a" stroke="#f87171" stroke-width="1.5"/>
+    <text x="785" y="195" text-anchor="middle" fill="#f87171" font-family="JetBrains Mono,monospace" font-size="11">Debug Adapter (DAP)</text>
+    <!-- Webview -->
+    <rect x="10" y="165" width="430" height="50" rx="6" fill="#10101a" stroke="#f5a623" stroke-width="1.5"/>
+    <text x="225" y="195" text-anchor="middle" fill="#f5a623" font-family="JetBrains Mono,monospace" font-size="11">Webview iframes (sandboxed Chromium)</text>
+    <!-- arrows -->
+    <line x1="440" y1="110" x2="460" y2="110" stroke="#2a2a3a" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="450" y="100" text-anchor="middle" fill="#8888a8" font-family="JetBrains Mono,monospace" font-size="9">IPC</text>
+    <defs>
+      <marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2a2a3a"/></marker>
+    </defs>
+  </svg>
+  <div class="cols cols-3" style="margin-top:.2em;">
+    <div class="card green"><h3>Renderer</h3><p>The UI you see. Monaco editor, tree views, status bar. Communicates with Extension Host over IPC (JSON-RPC).</p></div>
+    <div class="card purple"><h3>Extension Host</h3><p>A Node.js process that loads and runs extensions. Extensions share this process &mdash; heavy work should be offloaded to a Language Server or worker.</p></div>
+    <div class="card blue"><h3>Language Server Protocol</h3><p>A JSON-RPC protocol between the Extension Host and a separate language server process. Enables completions, diagnostics, hover, go-to-definition, and more.</p></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 05 — ANATOMY ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">05</span><h2>Anatomy of an Extension</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber"><h3>File Structure</h3></div>
+<pre><code class="language-text">my-extension/
+├── .vscode/
+│   └── launch.json        # debug config
+├── src/
+│   └── extension.ts       # entry point
+├── package.json           # manifest (critical!)
+├── tsconfig.json          # TypeScript config
+├── README.md              # Marketplace listing
+├── CHANGELOG.md           # version history
+└── icon.png               # 128x128 Marketplace icon</code></pre>
+      <div class="card green" style="margin-top:.3em;">
+        <h3>Activation Events</h3>
+        <p>Extensions are <span class="a">lazy-loaded</span>. They only activate when a matching event fires:</p>
+        <ul>
+          <li><code>onCommand:myExt.run</code> &mdash; command executed</li>
+          <li><code>onLanguage:python</code> &mdash; file of language opened</li>
+          <li><code>workspaceContains:**/Cargo.toml</code> &mdash; file exists</li>
+          <li><code>onStartupFinished</code> &mdash; after startup (use sparingly)</li>
+          <li><code>*</code> &mdash; always active (strongly discouraged)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card purple"><h3>package.json &mdash; The Manifest</h3></div>
+<pre><code class="language-json">{
+  "name": "my-extension",
+  "displayName": "My Extension",
+  "version": "1.0.0",
+  "engines": { "vscode": "^1.85.0" },
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [{
+      "command": "myExt.helloWorld",
+      "title": "Hello World"
+    }],
+    "keybindings": [{
+      "command": "myExt.helloWorld",
+      "key": "ctrl+shift+h",
+      "when": "editorTextFocus"
+    }],
+    "configuration": {
+      "title": "My Extension",
+      "properties": {
+        "myExt.greeting": {
+          "type": "string",
+          "default": "Hello"
+        }
+      }
+    }
+  }
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 06 — FIRST EXTENSION ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">06</span><h2>Your First Extension</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber"><h3>Step 1: Scaffold</h3></div>
+<pre><code class="language-bash"># Install the generator
+npm install -g yo generator-code
+
+# Scaffold a new extension
+yo code
+
+# Choose:
+#   ▸ New Extension (TypeScript)
+#   Name: hello-world
+#   Identifier: hello-world
+#   Enable strict mode: Yes</code></pre>
+      <div class="card green" style="margin-top:.3em;"><h3>Step 2: Run</h3>
+        <ul>
+          <li>Open the project in VSCode</li>
+          <li>Press <code>F5</code> &mdash; opens Extension Development Host</li>
+          <li>Run command: <code>Ctrl+Shift+P</code> &rarr; "Hello World"</li>
+          <li>See your notification message appear</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:.3em;"><h3>Step 3: Iterate</h3>
+        <p>Edit code &rarr; <code>Ctrl+Shift+F5</code> to reload the Development Host. Breakpoints work in the main VSCode instance. Console output appears in the Debug Console.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card purple"><h3>extension.ts — Entry Point</h3></div>
+<pre><code class="language-typescript">import * as vscode from 'vscode';
+
+// Called when the extension is activated
+export function activate(context: vscode.ExtensionContext) {
+
+  // Register a command
+  const disposable = vscode.commands.registerCommand(
+    'hello-world.helloWorld',
+    () =&gt; {
+      // Read from configuration
+      const config = vscode.workspace.getConfiguration('myExt');
+      const greeting = config.get&lt;string&gt;('greeting', 'Hello');
+
+      // Show an information message
+      vscode.window.showInformationMessage(
+        `${greeting} from Hello World!`
+      );
+    }
+  );
+
+  // Push to subscriptions for cleanup
+  context.subscriptions.push(disposable);
+}
+
+// Called when the extension is deactivated
+export function deactivate() {}</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 07 — COMMANDS & MENUS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">07</span><h2>Commands, Menus &amp; Keybindings</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p><span class="a">Commands</span> are the primary interaction model in VSCode. Every action — from opening a file to formatting code — is a command. Extensions register commands and bind them to menus, keybindings, or other triggers.</p>
+<pre><code class="language-typescript">// Register a text editor command
+const cmd = vscode.commands.registerTextEditorCommand(
+  'myExt.insertDate',
+  (editor, edit) =&gt; {
+    const date = new Date().toISOString().split('T')[0];
+    edit.insert(editor.selection.active, date);
+  }
+);
+
+// Execute another extension's command
+await vscode.commands.executeCommand(
+  'editor.action.formatDocument'
+);</code></pre>
+      <div class="card green" style="margin-top:.3em;">
+        <h3>When Clauses</h3>
+        <p>Control visibility and enablement with context conditions:</p>
+<pre><code class="language-json">"when": "editorLangId == typescript &amp;&amp; !editorReadonly"
+"when": "resourceScheme == file"
+"when": "view == myCustomView"</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card amber"><h3>Menu Contribution Points</h3></div>
+<pre><code class="language-json">"contributes": {
+  "menus": {
+    "editor/context": [{
+      "command": "myExt.insertDate",
+      "when": "editorTextFocus",
+      "group": "1_modification"
+    }],
+    "explorer/context": [{
+      "command": "myExt.processFile",
+      "when": "resourceExtname == .csv"
+    }],
+    "editor/title": [{
+      "command": "myExt.togglePreview",
+      "group": "navigation"
+    }],
+    "commandPalette": [{
+      "command": "myExt.insertDate",
+      "when": "editorIsOpen"
+    }]
+  }
+}</code></pre>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Menu Groups (ordering)</h3>
+        <p><code>navigation</code> (top), <code>1_modification</code>, <code>2_workspace</code>, <code>z_commands</code> (bottom). Items sort alphabetically within groups.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 08 — LANGUAGE FEATURES ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">08</span><h2>Language Features</h2></div>
+  <p>VSCode provides two approaches: <span class="a">programmatic language features</span> (direct API) for simple cases and the <span class="g">Language Server Protocol</span> for full-featured language support.</p>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber"><h3>Direct API — Quick &amp; Simple</h3></div>
+<pre><code class="language-typescript">// Completion provider
+vscode.languages.registerCompletionItemProvider(
+  'markdown',
+  {
+    provideCompletionItems(doc, pos) {
+      const items = [
+        new vscode.CompletionItem('TODO',
+          vscode.CompletionItemKind.Keyword),
+        new vscode.CompletionItem('FIXME',
+          vscode.CompletionItemKind.Keyword),
+      ];
+      return items;
+    }
+  },
+  '@'  // trigger character
+);
+
+// Hover provider
+vscode.languages.registerHoverProvider('json', {
+  provideHover(doc, pos) {
+    const range = doc.getWordRangeAtPosition(pos);
+    const word = doc.getText(range);
+    return new vscode.Hover(`Key: **${word}**`);
+  }
+});</code></pre>
+    </div>
+    <div>
+      <div class="card green"><h3>Available Providers</h3></div>
+      <table>
+        <thead><tr><th>Provider</th><th>Feature</th></tr></thead>
+        <tbody>
+          <tr><td><span class="a">CompletionItem</span></td><td>IntelliSense suggestions</td></tr>
+          <tr><td><span class="g">Hover</span></td><td>Tooltip on hover</td></tr>
+          <tr><td><span class="p">Definition</span></td><td>Go to definition</td></tr>
+          <tr><td><span class="b">Reference</span></td><td>Find all references</td></tr>
+          <tr><td><span class="r">DocumentSymbol</span></td><td>Outline &amp; breadcrumbs</td></tr>
+          <tr><td><span class="a">CodeAction</span></td><td>Quick fixes &amp; refactors</td></tr>
+          <tr><td><span class="g">CodeLens</span></td><td>Inline actionable info</td></tr>
+          <tr><td><span class="p">Diagnostic</span></td><td>Errors &amp; warnings</td></tr>
+          <tr><td><span class="b">Formatter</span></td><td>Document / range formatting</td></tr>
+          <tr><td><span class="r">SignatureHelp</span></td><td>Parameter hints</td></tr>
+        </tbody>
+      </table>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Diagnostics (Errors/Warnings)</h3>
+<pre><code class="language-typescript">const diag = vscode.languages.createDiagnosticCollection('myLint');
+diag.set(doc.uri, [
+  new vscode.Diagnostic(range, 'Unused variable',
+    vscode.DiagnosticSeverity.Warning)
+]);</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 09 — LSP ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">09</span><h2>Language Server Protocol (LSP)</h2></div>
+  <div class="cols cols-6040">
+    <div>
+      <p>The <span class="a">Language Server Protocol</span> is a JSON-RPC protocol between an editor and a language-specific server. Invented by Microsoft for VSCode, it's now used by Vim, Emacs, Sublime, and others.</p>
+      <div class="card amber" style="margin-top:.2em;">
+        <h3>Why LSP?</h3>
+        <ul>
+          <li><span class="a">Write once, use everywhere</span> &mdash; one server works in any LSP-capable editor</li>
+          <li><span class="g">Any language</span> &mdash; server can be written in Python, Rust, Go, etc.</li>
+          <li><span class="p">Process isolation</span> &mdash; crashes don't bring down the editor</li>
+          <li><span class="b">Performance</span> &mdash; heavy analysis runs out-of-process</li>
+        </ul>
+      </div>
+<pre><code class="language-typescript">// Client side (extension.ts)
+import { LanguageClient, TransportKind }
+  from 'vscode-languageclient/node';
+
+const serverModule = context.asAbsolutePath(
+  'server/out/server.js'
+);
+
+const client = new LanguageClient(
+  'myLangServer', 'My Language Server',
+  { module: serverModule, transport: TransportKind.ipc },
+  { documentSelector: [{ scheme: 'file', language: 'myLang' }] }
+);
+
+client.start();</code></pre>
+    </div>
+    <div>
+      <svg class="diagram" viewBox="0 0 360 220" width="340">
+        <rect x="10" y="10" width="150" height="45" rx="5" fill="#1a1a2a" stroke="#4ecb8d" stroke-width="1.5"/>
+        <text x="85" y="38" text-anchor="middle" fill="#4ecb8d" font-family="JetBrains Mono,monospace" font-size="12">VSCode (Client)</text>
+        <rect x="200" y="10" width="150" height="45" rx="5" fill="#1a1a2a" stroke="#a78bfa" stroke-width="1.5"/>
+        <text x="275" y="38" text-anchor="middle" fill="#a78bfa" font-family="JetBrains Mono,monospace" font-size="12">Language Server</text>
+        <!-- Request arrows -->
+        <line x1="160" y1="25" x2="200" y2="25" stroke="#f5a623" stroke-width="1.2" marker-end="url(#arrowAm)"/>
+        <text x="180" y="20" text-anchor="middle" fill="#f5a623" font-family="JetBrains Mono,monospace" font-size="8">request</text>
+        <line x1="200" y1="42" x2="160" y2="42" stroke="#60a5fa" stroke-width="1.2" marker-end="url(#arrowBl)"/>
+        <text x="180" y="53" text-anchor="middle" fill="#60a5fa" font-family="JetBrains Mono,monospace" font-size="8">response</text>
+        <defs>
+          <marker id="arrowAm" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f5a623"/></marker>
+          <marker id="arrowBl" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#60a5fa"/></marker>
+        </defs>
+      </svg>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>LSP Message Types</h3>
+        <ul>
+          <li><span class="a">textDocument/completion</span> &mdash; IntelliSense</li>
+          <li><span class="g">textDocument/hover</span> &mdash; hover info</li>
+          <li><span class="p">textDocument/definition</span> &mdash; go-to-definition</li>
+          <li><span class="b">textDocument/publishDiagnostics</span> &mdash; errors</li>
+          <li><span class="r">textDocument/formatting</span> &mdash; code formatting</li>
+          <li><span class="a">textDocument/rename</span> &mdash; symbol rename</li>
+        </ul>
+      </div>
+      <div class="card red" style="margin-top:.3em;">
+        <h3>Popular Language Servers</h3>
+        <p><span class="a">typescript-language-server</span>, <span class="g">rust-analyzer</span>, <span class="p">pylsp</span>, <span class="b">gopls</span>, <span class="r">clangd</span>, <span class="a">lua-language-server</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 10 — TREEVIEWS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">10</span><h2>TreeViews &amp; Custom Views</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p>TreeViews let you add custom panels to the <span class="a">sidebar</span>, <span class="g">panel area</span>, or <span class="p">Activity Bar</span>. They display hierarchical data with icons, descriptions, and context menus.</p>
+      <div class="card amber"><h3>Contribution in package.json</h3></div>
+<pre><code class="language-json">"contributes": {
+  "viewsContainers": {
+    "activitybar": [{
+      "id": "myExtExplorer",
+      "title": "My Extension",
+      "icon": "resources/icon.svg"
+    }]
+  },
+  "views": {
+    "myExtExplorer": [{
+      "id": "myExt.projectsView",
+      "name": "Projects"
+    }, {
+      "id": "myExt.tasksView",
+      "name": "Tasks"
+    }]
+  }
+}</code></pre>
+    </div>
+    <div>
+      <div class="card green"><h3>TreeDataProvider</h3></div>
+<pre><code class="language-typescript">class ProjectProvider
+  implements vscode.TreeDataProvider&lt;ProjectItem&gt; {
+
+  private _onDidChange = new vscode.EventEmitter&lt;
+    ProjectItem | undefined
+  &gt;();
+  readonly onDidChangeTreeData = this._onDidChange.event;
+
+  getTreeItem(el: ProjectItem): vscode.TreeItem {
+    return el;
+  }
+
+  async getChildren(el?: ProjectItem) {
+    if (!el) {
+      return this.getProjects();  // root items
+    }
+    return el.getFiles();          // child items
+  }
+
+  refresh(): void {
+    this._onDidChange.fire(undefined);
+  }
+}
+
+// Register the provider
+vscode.window.registerTreeDataProvider(
+  'myExt.projectsView',
+  new ProjectProvider()
+);</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 11 — WEBVIEWS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">11</span><h2>Webviews</h2></div>
+  <p>Webviews are <span class="a">sandboxed iframes</span> that render custom HTML/CSS/JS inside VSCode. Use them for rich UIs that go beyond the built-in component model &mdash; dashboards, visual editors, forms, or rendered previews.</p>
+  <div class="cols cols-2">
+    <div>
+<pre><code class="language-typescript">// Create a Webview panel
+const panel = vscode.window.createWebviewPanel(
+  'myPreview',           // internal ID
+  'My Preview',          // title
+  vscode.ViewColumn.Two, // editor column
+  {
+    enableScripts: true,           // allow JS
+    retainContextWhenHidden: true, // keep state
+    localResourceRoots: [          // restrict access
+      vscode.Uri.joinPath(context.extensionUri, 'media')
+    ]
+  }
+);
+
+// Set HTML content
+panel.webview.html = getHtmlContent(panel.webview);
+
+// Receive messages from webview
+panel.webview.onDidReceiveMessage(msg =&gt; {
+  if (msg.command === 'save') {
+    saveData(msg.data);
+  }
+});</code></pre>
+    </div>
+    <div>
+<pre><code class="language-html">&lt;!-- Inside the webview HTML --&gt;
+&lt;script&gt;
+  const vscode = acquireVsCodeApi();
+
+  // Send message to extension
+  vscode.postMessage({
+    command: 'save',
+    data: { name: 'test' }
+  });
+
+  // Receive messages from extension
+  window.addEventListener('message', event =&gt; {
+    const msg = event.data;
+    if (msg.command === 'update') {
+      document.getElementById('content')
+        .textContent = msg.text;
+    }
+  });
+
+  // Persist state across visibility changes
+  vscode.setState({ scrollPos: 42 });
+  const state = vscode.getState();
+&lt;/script&gt;</code></pre>
+      <div class="card red" style="margin-top:.3em;">
+        <h3>Security</h3>
+        <p>Webviews are sandboxed. Use <code>Content-Security-Policy</code> headers, <code>nonce</code> attributes on scripts, and <code>localResourceRoots</code> to restrict file access. Never inject user content as raw HTML.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 12 — WORKSPACE API ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">12</span><h2>Workspace, FileSystem &amp; Configuration</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber"><h3>Workspace API</h3></div>
+<pre><code class="language-typescript">// Find files
+const files = await vscode.workspace.findFiles(
+  '**/*.test.ts',    // include
+  '**/node_modules/**' // exclude
+);
+
+// Read &amp; write files
+const uri = vscode.Uri.file('/path/to/file.txt');
+const data = await vscode.workspace.fs.readFile(uri);
+await vscode.workspace.fs.writeFile(uri, Buffer.from('new'));
+
+// Watch for changes
+const watcher = vscode.workspace.createFileSystemWatcher(
+  '**/*.json'
+);
+watcher.onDidChange(uri =&gt; console.log('Changed:', uri));
+watcher.onDidCreate(uri =&gt; console.log('Created:', uri));
+watcher.onDidDelete(uri =&gt; console.log('Deleted:', uri));
+
+// Apply a batch of edits
+const wsEdit = new vscode.WorkspaceEdit();
+wsEdit.replace(uri, range, 'replacement text');
+wsEdit.createFile(newUri, { ignoreIfExists: true });
+await vscode.workspace.applyEdit(wsEdit);</code></pre>
+    </div>
+    <div>
+      <div class="card green"><h3>Configuration API</h3></div>
+<pre><code class="language-typescript">// Read configuration
+const config = vscode.workspace.getConfiguration('myExt');
+const value = config.get&lt;string&gt;('greeting', 'default');
+
+// Write configuration
+await config.update(
+  'greeting', 'Bonjour',
+  vscode.ConfigurationTarget.Workspace
+);
+
+// Watch for config changes
+vscode.workspace.onDidChangeConfiguration(e =&gt; {
+  if (e.affectsConfiguration('myExt.greeting')) {
+    // reload
+  }
+});</code></pre>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Configuration Targets</h3>
+        <ul>
+          <li><span class="a">Global</span> &mdash; user settings (~/.config/Code/...)</li>
+          <li><span class="g">Workspace</span> &mdash; .vscode/settings.json</li>
+          <li><span class="p">WorkspaceFolder</span> &mdash; per-folder in multi-root</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Storage API</h3>
+        <p>Use <code>context.globalState</code> and <code>context.workspaceState</code> for persistent key-value storage. Use <code>context.secrets</code> for sensitive data (tokens, passwords) &mdash; stored in the OS keychain.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 13 — DEBUGGING EXTENSIONS ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">13</span><h2>Debugging Your Extension</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p>VSCode has first-class support for debugging extensions. Press <span class="a">F5</span> to launch an <span class="g">Extension Development Host</span> &mdash; a second VSCode window with your extension loaded.</p>
+      <div class="card amber"><h3>launch.json</h3></div>
+<pre><code class="language-json">{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "preLaunchTask": "npm: watch"
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/test"
+      ]
+    }
+  ]
+}</code></pre>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Debugging Techniques</h3>
+        <ul>
+          <li><span class="a">Breakpoints</span> &mdash; set in your extension source files (TypeScript or JavaScript)</li>
+          <li><span class="g">Debug Console</span> &mdash; evaluate expressions in the Extension Host context</li>
+          <li><span class="p">Output Channel</span> &mdash; dedicated logging panel for your extension</li>
+          <li><span class="b">Developer Tools</span> &mdash; Ctrl+Shift+I opens Chromium DevTools for the renderer</li>
+        </ul>
+      </div>
+<pre><code class="language-typescript">// Create a dedicated output channel
+const log = vscode.window.createOutputChannel('My Extension');
+log.appendLine('Extension activated');
+log.show();  // focus the channel
+
+// Use console.log too — appears in Debug Console
+console.log('Debug info:', someObject);</code></pre>
+      <div class="card red" style="margin-top:.3em;">
+        <h3>Common Pitfalls</h3>
+        <ul>
+          <li>Forgetting to compile TS before debugging</li>
+          <li>Activation event doesn't match — extension never loads</li>
+          <li>Stale Extension Host — restart with Ctrl+Shift+F5</li>
+          <li>Wrong <code>engines.vscode</code> version in package.json</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 14 — TESTING ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">14</span><h2>Testing Extensions</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p>Extension tests run inside a real VSCode instance via <span class="a">@vscode/test-electron</span>. This gives tests full access to the VSCode API, real file systems, and installed extensions.</p>
+      <div class="card amber"><h3>Test Runner Setup</h3></div>
+<pre><code class="language-typescript">// src/test/runTest.ts
+import { runTests } from '@vscode/test-electron';
+import path from 'path';
+
+async function main() {
+  await runTests({
+    extensionDevelopmentPath: path.resolve(__dirname, '../../'),
+    extensionTestsPath: path.resolve(__dirname, './suite/index'),
+    launchArgs: [
+      '--disable-extensions',  // isolate your extension
+      path.resolve(__dirname, '../../test-fixtures')
+    ]
+  });
+}
+main();</code></pre>
+    </div>
+    <div>
+      <div class="card green"><h3>Writing Tests</h3></div>
+<pre><code class="language-typescript">// src/test/suite/extension.test.ts
+import * as assert from 'assert';
+import * as vscode from 'vscode';
+
+suite('Extension Tests', () =&gt; {
+
+  test('Command is registered', async () =&gt; {
+    const cmds = await vscode.commands.getCommands(true);
+    assert.ok(cmds.includes('myExt.helloWorld'));
+  });
+
+  test('Inserts date at cursor', async () =&gt; {
+    const doc = await vscode.workspace.openTextDocument({
+      content: '', language: 'plaintext'
+    });
+    const editor = await vscode.window.showTextDocument(doc);
+
+    await vscode.commands.executeCommand('myExt.insertDate');
+
+    const text = doc.getText();
+    assert.match(text, /^\d{4}-\d{2}-\d{2}$/);
+  });
+});</code></pre>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Unit Tests (No VSCode)</h3>
+        <p>Pure logic (parsers, formatters, utils) can be tested with Jest or Mocha directly &mdash; no need for the Extension Host. Only test VSCode API interactions with @vscode/test-electron.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 15 — NOTEBOOK & TERMINAL ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">15</span><h2>Notebooks, Terminal &amp; Source Control</h2></div>
+  <div class="cols cols-3">
+    <div>
+      <div class="card amber">
+        <h3>Notebook API</h3>
+        <p>Create custom notebook types (like Jupyter) with your own kernel. Register a <code>NotebookSerializer</code> to load/save and a <code>NotebookController</code> to execute cells.</p>
+      </div>
+<pre><code class="language-typescript">const controller = vscode.notebooks
+  .createNotebookController(
+    'myKernel', 'my-notebook', 'My Kernel'
+  );
+
+controller.executeHandler = async (cells) =&gt; {
+  for (const cell of cells) {
+    const exec = controller.createNotebookCellExecution(cell);
+    exec.start(Date.now());
+    // Run the cell content
+    const result = evaluate(cell.document.getText());
+    exec.replaceOutput([
+      new vscode.NotebookCellOutput([
+        vscode.NotebookCellOutputItem.text(result)
+      ])
+    ]);
+    exec.end(true);
+  }
+};</code></pre>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Terminal API</h3>
+        <p>Create, write to, and manage integrated terminals programmatically.</p>
+      </div>
+<pre><code class="language-typescript">// Create a terminal
+const term = vscode.window.createTerminal({
+  name: 'My Build',
+  cwd: '/path/to/project',
+  env: { NODE_ENV: 'test' }
+});
+
+term.show();
+term.sendText('npm test');
+
+// Terminal link provider
+vscode.window.registerTerminalLinkProvider({
+  provideTerminalLinks(ctx) {
+    // Detect patterns in terminal output
+    const match = ctx.line.match(
+      /error in (.+):(\d+)/
+    );
+    if (match) {
+      return [{
+        startIndex: match.index,
+        length: match[0].length,
+        file: match[1], line: match[2]
+      }];
+    }
+  },
+  handleTerminalLink(link) {
+    // Open the file at the error line
+  }
+});</code></pre>
+    </div>
+    <div>
+      <div class="card purple">
+        <h3>Source Control API</h3>
+        <p>Extensions can provide their own SCM (not just Git). Register changes, groups, and quick-diff decorations.</p>
+      </div>
+<pre><code class="language-typescript">const scm = vscode.scm.createSourceControl(
+  'myScm', 'My SCM'
+);
+
+const changes = scm.createResourceGroup(
+  'changes', 'Changes'
+);
+
+changes.resourceStates = [{
+  resourceUri: fileUri,
+  decorations: {
+    strikeThrough: false,
+    tooltip: 'Modified'
+  }
+}];
+
+scm.quickDiffProvider = {
+  provideOriginalResource(uri) {
+    // Return URI of the original file
+    return toOriginalUri(uri);
+  }
+};</code></pre>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 16 — PACKAGING ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">16</span><h2>Packaging with vsce</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <p><span class="a">vsce</span> (Visual Studio Code Extensions) is the CLI tool for packaging and publishing. It bundles your extension into a <code>.vsix</code> file &mdash; a zip containing your compiled code, manifest, README, and assets.</p>
+<pre><code class="language-bash"># Install vsce
+npm install -g @vscode/vsce
+
+# Package into a .vsix
+vsce package
+# Creates: my-extension-1.0.0.vsix
+
+# Install locally for testing
+code --install-extension my-extension-1.0.0.vsix
+
+# Check what will be included
+vsce ls</code></pre>
+      <div class="card amber" style="margin-top:.3em;">
+        <h3>.vscodeignore</h3>
+        <p>Like <code>.gitignore</code> but for packaging. Exclude dev files to keep the vsix small:</p>
+<pre><code class="language-text">.vscode/**
+src/**
+node_modules/**
+!node_modules/prod-dependency/**
+**/*.test.ts
+tsconfig.json
+.eslintrc.json</code></pre>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Bundling with esbuild</h3>
+        <p>Bundle your extension into a single file for faster activation and smaller size:</p>
+      </div>
+<pre><code class="language-javascript">// esbuild.mjs
+import { build } from 'esbuild';
+
+await build({
+  entryPoints: ['src/extension.ts'],
+  bundle: true,
+  outfile: 'out/extension.js',
+  external: ['vscode'],  // provided by VSCode
+  format: 'cjs',
+  platform: 'node',
+  minify: true,
+  sourcemap: true,
+});</code></pre>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Size Matters</h3>
+        <ul>
+          <li>Smaller vsix &rarr; faster install &amp; marketplace load</li>
+          <li>Fewer files &rarr; faster activation (less I/O)</li>
+          <li>Bundle + minify can shrink 10x</li>
+          <li>Tree-shake unused dependencies</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Pre-publish Checks</h3>
+        <ul>
+          <li>README.md renders correctly (used on Marketplace page)</li>
+          <li>CHANGELOG.md documents version changes</li>
+          <li>icon.png is 128x128 and looks good at small sizes</li>
+          <li><code>engines.vscode</code> is the minimum supported version</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 17 — PUBLISHING ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">17</span><h2>Publishing to the Marketplace</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber"><h3>Setup (one-time)</h3></div>
+<pre><code class="language-bash"># 1. Create a publisher at:
+#    https://marketplace.visualstudio.com/manage
+
+# 2. Create a Personal Access Token (PAT)
+#    Azure DevOps → User Settings → PATs
+#    Scope: Marketplace (Manage)
+
+# 3. Login with vsce
+vsce login &lt;publisher-name&gt;
+# Paste your PAT when prompted</code></pre>
+      <div class="card green" style="margin-top:.3em;"><h3>Publish</h3></div>
+<pre><code class="language-bash"># Publish current version
+vsce publish
+
+# Bump version and publish
+vsce publish minor   # 1.0.0 → 1.1.0
+vsce publish patch   # 1.1.0 → 1.1.1
+
+# Pre-release versions
+vsce publish --pre-release</code></pre>
+      <div class="card red" style="margin-top:.3em;">
+        <h3>Unpublish</h3>
+        <p><code>vsce unpublish &lt;publisher&gt;.&lt;extension&gt;</code> removes it entirely. Use <span class="r">with caution</span> &mdash; users who depend on it will lose access.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card purple"><h3>Marketplace Listing</h3></div>
+<pre><code class="language-json">{
+  "publisher": "myPublisher",
+  "displayName": "My Extension",
+  "description": "One-line summary",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#0a0a0f",
+    "theme": "dark"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Linters"
+  ],
+  "keywords": ["python", "linting", "formatter"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/me/my-ext"
+  },
+  "badges": [{
+    "url": "https://img.shields.io/...",
+    "href": "https://...",
+    "description": "Build Status"
+  }]
+}</code></pre>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Discovery Tips</h3>
+        <ul>
+          <li>Clear, searchable <code>displayName</code></li>
+          <li>Accurate <code>categories</code> and <code>keywords</code></li>
+          <li>High-quality README with screenshots/GIFs</li>
+          <li>Respond to issues and reviews promptly</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 18 — CI/CD ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">18</span><h2>CI/CD for Extensions</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber"><h3>GitHub Actions Workflow</h3></div>
+<pre><code class="language-yaml">name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run compile
+      - run: npm test
+        env:
+          DISPLAY: ':99.0'
+      - run: npx @vscode/vsce package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: '*.vsix'
+
+  publish:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx @vscode/vsce publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}</code></pre>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>The Display Problem</h3>
+        <p>Extension tests launch a real VSCode window and need a display server. On Linux CI, use <span class="a">xvfb</span> (X Virtual Frame Buffer):</p>
+<pre><code class="language-yaml">- run: |
+    sudo apt-get install -y xvfb
+    xvfb-run -a npm test</code></pre>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Release Strategy</h3>
+        <ul>
+          <li><span class="a">Tag-based</span> &mdash; push <code>v1.2.3</code> tag to trigger publish</li>
+          <li><span class="g">Pre-release channel</span> &mdash; ship beta builds for early feedback</li>
+          <li><span class="p">Changelog</span> &mdash; auto-generate from conventional commits</li>
+          <li><span class="b">Semantic versioning</span> &mdash; match npm/Marketplace expectations</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Multi-Platform Testing</h3>
+        <p>Test on <span class="a">ubuntu</span>, <span class="g">macos</span>, and <span class="p">windows</span> runners. Path separators, line endings, and shell behaviour differ. Use a matrix strategy:</p>
+<pre><code class="language-yaml">strategy:
+  matrix:
+    os: [ubuntu-latest, macos-latest, windows-latest]
+runs-on: ${{ matrix.os }}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 19 — PERFORMANCE & SECURITY ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">19</span><h2>Performance &amp; Security</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>Activation Performance</h3>
+        <ul>
+          <li>Use <span class="a">specific activation events</span> — never <code>*</code></li>
+          <li>Bundle with esbuild/webpack — one file, no node_modules scan</li>
+          <li>Defer heavy work with <code>setTimeout</code> or <code>setImmediate</code></li>
+          <li>Use <span class="g">Extension Bisect</span> (<code>Help &gt; Start Extension Bisect</code>) to find slow extensions</li>
+        </ul>
+      </div>
+      <div class="card green" style="margin-top:.3em;">
+        <h3>Runtime Performance</h3>
+        <ul>
+          <li>Offload CPU work to Language Servers or Worker Threads</li>
+          <li>Debounce file watchers and text change listeners</li>
+          <li>Use <code>CancellationToken</code> to abort stale requests</li>
+          <li>Cache expensive computations</li>
+          <li>Profile with <code>Developer: Show Running Extensions</code></li>
+        </ul>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Startup Timeline</h3>
+        <p><code>Developer: Startup Performance</code> shows exactly when your extension activated, how long it took, and what triggered it.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card red">
+        <h3>Security Considerations</h3>
+        <ul>
+          <li><span class="r">Extensions run with full user permissions</span> — they can read/write any file, make network requests, and execute shell commands</li>
+          <li>VSCode does <span class="a">not sandbox</span> extension code (only Webview content)</li>
+          <li>The Marketplace has <span class="g">basic malware scanning</span> but no full audit</li>
+        </ul>
+      </div>
+      <div class="card blue" style="margin-top:.3em;">
+        <h3>Best Practices for Authors</h3>
+        <ul>
+          <li>Request <span class="a">minimal permissions</span> and file access</li>
+          <li>Validate all user and file input</li>
+          <li>Use <code>context.secrets</code> for tokens (OS keychain)</li>
+          <li>Pin dependency versions &amp; audit regularly</li>
+          <li>Never execute arbitrary code from untrusted sources</li>
+          <li>Set CSP headers on all Webviews</li>
+        </ul>
+      </div>
+      <div class="card amber" style="margin-top:.3em;">
+        <h3>For Users</h3>
+        <ul>
+          <li>Check publisher reputation and install counts</li>
+          <li>Review source code if open-source</li>
+          <li>Use <span class="a">Workspace Trust</span> to restrict extensions in untrusted folders</li>
+          <li>Review extension permissions before installing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ SLIDE 20 — SUMMARY ═══════════════════════════════ -->
+<section>
+  <div class="slide-hdr"><span class="tag">20</span><h2>Summary &amp; Next Steps</h2></div>
+  <div class="cols cols-2">
+    <div>
+      <div class="card amber">
+        <h3>Key Takeaways</h3>
+        <ul>
+          <li>VSCode's power comes from its extension model</li>
+          <li>Extensions run in a separate Extension Host process</li>
+          <li><code>package.json</code> is the manifest &mdash; declares everything</li>
+          <li>Activation events keep extensions lazy and fast</li>
+          <li>Language Server Protocol enables reusable language tooling</li>
+          <li>Webviews provide rich custom UIs (sandboxed iframes)</li>
+          <li>Bundle with esbuild for fast activation and small size</li>
+          <li>Publish to the Marketplace with vsce</li>
+          <li>Test in real VSCode with @vscode/test-electron</li>
+          <li>Automate build, test, publish with GitHub Actions</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card green">
+        <h3>Recommended Reading</h3>
+        <ul>
+          <li><span class="a">code.visualstudio.com/api</span> &mdash; official Extension API docs</li>
+          <li><span class="g">github.com/microsoft/vscode-extension-samples</span> &mdash; official samples</li>
+          <li><span class="p">Language Server Protocol spec</span> &mdash; microsoft.github.io/language-server-protocol</li>
+          <li><span class="b">VSCode Extension Marketplace</span> &mdash; study popular extensions' source</li>
+        </ul>
+      </div>
+      <div class="card purple" style="margin-top:.3em;">
+        <h3>Project Ideas</h3>
+        <ul>
+          <li>Snippet pack for your favourite framework</li>
+          <li>Custom theme based on your terminal colours</li>
+          <li>Linter for a domain-specific config format</li>
+          <li>Sidebar panel that integrates with an external API</li>
+          <li>Notebook controller for a scripting language</li>
+          <li>Language Server for a niche programming language</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center; margin-top:.5em; color:var(--muted); font-size:.5em;">
+    <span class="a">Thank you!</span> &mdash; Built with Reveal.js &middot; Single self-contained HTML file
+  </p>
+</section>
+
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/monokai.min.css">
+<script>
+Reveal.initialize({
+  hash: true,
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  center: false,
+  width: 1100,
+  height: 900,
+  margin: 0.01,
+  plugins: [RevealHighlight],
+  highlight: { theme: 'monokai' }
+});
+</script>
+<script>
+(function(){
+  var h = Reveal.getConfig().height || 900;
+  var m = Reveal.getConfig().margin || 0.02;
+  var maxH = Math.floor(h * (1 - 2 * m)) + 'px';
+  function fixSlides(){
+    document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){
+      s.style.display = 'block';
+      s.style.maxHeight = maxH;
+    });
+  }
+  Reveal.on('ready', fixSlides);
+  Reveal.on('slidechanged', fixSlides);
+})();
+</script>
+</body>
+</html>
