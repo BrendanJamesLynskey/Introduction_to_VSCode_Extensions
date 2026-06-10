@@ -35,6 +35,11 @@ An interactive Reveal.js presentation covering VSCode extensions — from archit
 
 ---
 
+## See also
+
+- [Writing VS Code Extensions — Tutorial Series](https://brendanjameslynskey.github.io/Writing_VSCode_Extensions/) ([repo](https://github.com/BrendanJamesLynskey/Writing_VSCode_Extensions)) — the hands-on companion to this single-deck overview: a step-by-step five-part tutorial that builds an extension from scaffolding through commands, the Extension API, webviews & language features, and testing & publishing.
+- Series hub: [Software](https://github.com/BrendanJamesLynskey/Software) — presentations, playgrounds and reference projects.
+
 ## Slide Controls
 
 | Action | Key |
